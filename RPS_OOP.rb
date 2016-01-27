@@ -1,3 +1,53 @@
+class Move
+  VALUES = %w(rock paper scissors)
+
+  def initialize(value)
+    @value = value
+  end
+
+  def rock?
+    @value == 'rock'
+  end
+
+  def paper?
+    @value == 'paper'
+  end
+
+  def scissors?
+    @value == 'scissors'
+  end
+
+  def >(other_move)
+    if rock?
+      return true if other_move.scissors?
+      return false
+    elsif paper?
+      return true if other_move.rock?
+      return false
+    elsif scissors?
+      return true if other_move.paper?
+      return false
+    end
+  end
+
+  def <(other_move)
+    if rock?
+      return true if other_move.paper?
+      return false
+    elsif paper?
+      return true if other_move.scissors?
+      return false
+    elsif scissors?
+      return true if other_move.rock?
+      return false
+    end
+  end
+
+  def to_s
+    @value
+  end
+end
+
 class Player
   attr_accessor :move, :name
 
@@ -12,10 +62,10 @@ class Human < Player
     loop do
       puts "Choose your option:(rock, paper or scissors)"
       mv = gets.chomp
-      break if ['rock', 'paper', 'scissors'].include? mv.downcase
+      break if Move::VALUES.include? mv.downcase
       puts "Invalid input, please choose again."
     end
-    self.move = mv
+    self.move = Move.new(mv)
   end
 
   def set_name
@@ -32,7 +82,7 @@ end
 
 class Computer < Player
   def choose
-    self.move = ['rock', 'paper', 'scissors'].sample
+    self.move = Move.new(Move::VALUES.sample)
   end
 
   def set_name
@@ -60,18 +110,12 @@ class RPSGame
     puts "#{human.name} chose: #{human.move}"
     puts "#{computer.name} chose: #{computer.move}"
 
-    if human.move == "rock"
-      puts "#{human.name} win!" if computer.move == "scissors"
-      puts "#{computer.name} wins!" if computer.move == "paper"
-      puts "Its a tie!" if computer.move == "rock"
-    elsif human.move == "paper"
-      puts "#{human.name} win!" if computer.move == "rock"
-      puts "#{computer.name} wins!" if computer.move == "scissors"
-      puts "Its a tie!" if computer.move == "paper"
-    elsif human.move == "scissors"
-      puts "#{human.name} win!" if computer.move == "paper"
-      puts "#{computer.name} wins!" if computer.move == "rock"
-      puts "Its a tie!" if computer.move == "scissors"
+    if human.move > computer.move
+      puts "#{human.name} won!"
+    elsif human.move < computer.move
+      puts "#{computer.name} won!"
+    else
+      puts "Its a tie!"
     end
   end
 
