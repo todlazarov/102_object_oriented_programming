@@ -100,10 +100,31 @@ class Square
 end
 
 class Player
+  attr_accessor :name
   attr_reader :marker
 
   def initialize(marker)
     @marker = marker
+    set_name
+  end
+end
+
+class Human < Player
+  def set_name
+    n = ''
+    loop do
+      puts "What is your name?"
+      n = gets.chomp
+      break unless n.empty?
+      puts "That is not a valid choice."
+    end
+    self.name = n
+  end
+end
+
+class Computer < Player
+  def set_name
+    self.name = ['R2D2', 'Chappie', 'Sonny', 'Optimus Prime', 'Well-E'].sample
   end
 end
 
@@ -112,12 +133,12 @@ class TTTGame
   COMPUTER_MARKER = 'O'
   FIRST_TO_MOVE = HUMAN_MARKER
 
-  attr_reader :board, :human, :computer
+  attr_accessor :board, :human, :computer
 
   def initialize
     @board = Board.new
-    @human = Player.new(HUMAN_MARKER)
-    @computer = Player.new(COMPUTER_MARKER)
+    @human = Human.new(HUMAN_MARKER)
+    @computer = Computer.new(COMPUTER_MARKER)
     @current_marker = FIRST_TO_MOVE
   end
 
@@ -180,9 +201,9 @@ class TTTGame
 
     case board.winning_marker
     when human.marker
-      puts "You won!"
+      puts "#{human.name} won!"
     when computer.marker
-      puts "Computer won"
+      puts "#{computer.name} won!"
     else
       puts "Its a tie!"
     end
