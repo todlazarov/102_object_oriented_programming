@@ -13,7 +13,7 @@
 require 'pry'
 
 class Board
-  WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8 ,9]] + # rows
+  WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
                   [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # columns
                   [[1, 5, 9], [3, 5, 7]]              # diagonals
 
@@ -27,7 +27,7 @@ class Board
   end
 
   def unmarked_keys
-    @squares.keys.select {|key| @squares[key].unmarked? }
+    @squares.keys.select { |key| @squares[key].unmarked? }
   end
 
   def full?
@@ -41,15 +41,13 @@ class Board
   def winning_marker
     WINNING_LINES.each do |line|
       squares = @squares.values_at(*line)
-      if three_identical_markers?(squares)
-        return squares.first.marker
-      end
+      return squares.first.marker if three_identical_markers?(squares)
     end
     nil
   end
 
   def reset
-    (1..9).each {|key| @squares[key] = Square.new}
+    (1..9).each { |key| @squares[key] = Square.new }
   end
 
   def draw
@@ -73,14 +71,14 @@ class Board
   private
 
   def three_identical_markers?(squares)
-    markers= squares.select(&:marked?).collect(&:marker)
+    markers = squares.select(&:marked?).collect(&:marker)
     return false if markers.size != 3
     markers.min == markers.max
   end
 end
 
 class Square
-  INITIAL_MARKER = " "
+  INITIAL_MARKER = ' '
 
   attr_accessor :marker
 
@@ -110,8 +108,8 @@ class Player
 end
 
 class TTTGame
-  HUMAN_MARKER = "X"
-  COMPUTER_MARKER = "O"
+  HUMAN_MARKER = 'X'
+  COMPUTER_MARKER = 'O'
   FIRST_TO_MOVE = HUMAN_MARKER
 
   attr_reader :board, :human, :computer
@@ -156,9 +154,9 @@ class TTTGame
   def display_board
     clear
     puts "You are a #{human.marker}. Computer is a #{computer.marker}"
-    puts ""
+    puts ''
     board.draw
-    puts ""
+    puts ''
   end
 
   def human_moves
