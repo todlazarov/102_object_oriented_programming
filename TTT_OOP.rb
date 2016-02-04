@@ -22,10 +22,6 @@ class Board
     reset
   end
 
-  def get_square_at(key)
-    @squares[key]
-  end
-
   def set_square_at(key, marker)
     @squares[key].marker = marker
   end
@@ -39,7 +35,7 @@ class Board
   end
 
   def someone_won?
-    !!detect_winner
+    !!winning_marker
   end
 
   def count_human_marker(squares)
@@ -50,7 +46,7 @@ class Board
     squares.collect(&:marker).count(TTTGame::COMPUTER_MARKER)
   end
 
-  def detect_winner
+  def winning_marker
     WINNING_LINES.each do |line|
       if count_human_marker(@squares.values_at(*line)) == 3
         return TTTGame::HUMAN_MARKER
@@ -63,6 +59,24 @@ class Board
 
   def reset
     (1..9).each {|key| @squares[key] = Square.new}
+  end
+
+  def draw
+    puts "     |     |"
+    puts "  #{@squares[1]}  |  #{@squares[2]}  |  #{@squares[3]}"
+    puts "     |     |"
+    puts "-----+-----+-----"
+    puts "     |     |"
+    puts "  #{@squares[4]}  |  #{@squares[5]}  |  #{@squares[6]}"
+    puts "     |     |"
+    puts "-----+-----+-----"
+    puts "     |     |"
+    puts "  #{@squares[7]}  |  #{@squares[8]}  |  #{@squares[9]}"
+    puts "     |     |"
+  end
+
+  def []=(num, marker)
+    @squares[num].marker = marker
   end
 end
 
@@ -114,20 +128,10 @@ class TTTGame
   end
 
   def display_board
-    system "clear"
+    clear
     puts "You are a #{human.marker}. Computer is a #{computer.marker}"
     puts ""
-    puts "     |     |"
-    puts "  #{board.get_square_at(1)}  |  #{board.get_square_at(2)}  |  #{board.get_square_at(3)}"
-    puts "     |     |"
-    puts "-----+-----+-----"
-    puts "     |     |"
-    puts "  #{board.get_square_at(4)}  |  #{board.get_square_at(5)}  |  #{board.get_square_at(6)}"
-    puts "     |     |"
-    puts "-----+-----+-----"
-    puts "     |     |"
-    puts "  #{board.get_square_at(7)}  |  #{board.get_square_at(8)}  |  #{board.get_square_at(9)}"
-    puts "     |     |"
+    board.draw
     puts ""
   end
 
@@ -140,7 +144,7 @@ class TTTGame
       puts "Sorry that's not a valid choice"
     end
 
-    board.set_square_at(square, human.marker)
+    board[square] = human.marker
   end
 
   def computer_moves
@@ -150,7 +154,7 @@ class TTTGame
   def display_results
     display_board
 
-    case board.detect_winner 
+    case board.winning_marker
     when human.marker
       puts "You won!"
     when computer.marker
@@ -172,6 +176,16 @@ class TTTGame
     answer == 'y'
   end
 
+  def clear
+    system 'clear'
+  end
+
+  def reset
+    board.reset
+    puts "Let's play again!"
+    sleep(1)
+  end
+
   def play
     display_welcome_message
 
@@ -189,9 +203,7 @@ class TTTGame
       end
       display_results
       break unless play_again?
-      board.reset
-      puts "Let's play again!"
-      sleep(2)
+      reset
     end
 
     display_goodbye_message
