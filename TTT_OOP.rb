@@ -100,12 +100,13 @@ class Square
 end
 
 class Player
-  attr_accessor :name
+  attr_accessor :name, :score
   attr_reader :marker
 
   def initialize(marker)
     @marker = marker
     set_name
+    self.score = 0
   end
 end
 
@@ -120,11 +121,19 @@ class Human < Player
     end
     self.name = n
   end
+
+  def score_counter
+    self.score += 1
+  end
 end
 
 class Computer < Player
   def set_name
     self.name = ['R2D2', 'Chappie', 'Sonny', 'Optimus Prime', 'Well-E'].sample
+  end
+
+  def score_counter
+    self.score += 1
   end
 end
 
@@ -161,6 +170,21 @@ class TTTGame
     display_goodbye_message
   end
 
+  def display_results
+    display_board
+
+    case board.winning_marker
+    when human.marker
+      puts "#{human.name} won!"
+      human.score_counter
+    when computer.marker
+      puts "#{computer.name} won!"
+      computer.score_counter
+    else
+      puts "Its a tie!"
+    end
+  end
+
   private
 
   def display_welcome_message
@@ -175,6 +199,8 @@ class TTTGame
   def display_board
     clear
     puts "#{human.name}, you are a #{human.marker}. #{computer.name} is a #{computer.marker}"
+    puts ''
+    puts "The score is: #{human.name} - #{human.score} and #{computer.name} - #{computer.score}"
     puts ''
     board.draw
     puts ''
@@ -194,19 +220,6 @@ class TTTGame
 
   def computer_moves
     board.set_square_at(board.unmarked_keys.sample, computer.marker)
-  end
-
-  def display_results
-    display_board
-
-    case board.winning_marker
-    when human.marker
-      puts "#{human.name} won!"
-    when computer.marker
-      puts "#{computer.name} won!"
-    else
-      puts "Its a tie!"
-    end
   end
 
   def play_again?
