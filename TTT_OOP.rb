@@ -174,14 +174,14 @@ class TTTGame
 
   def display_board
     clear
-    puts "You are a #{human.marker}. Computer is a #{computer.marker}"
+    puts "#{human.name}, you are a #{human.marker}. #{computer.name} is a #{computer.marker}"
     puts ''
     board.draw
     puts ''
   end
 
   def human_moves
-    puts "Choose a square (#{board.unmarked_keys.join(', ')}): "
+    puts "#{human.name} please choose a square (#{board.unmarked_keys.join(', ')}): "
     square = nil
     loop do
       square = gets.chomp.to_i
