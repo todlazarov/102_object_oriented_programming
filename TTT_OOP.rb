@@ -155,34 +155,54 @@ class TTTGame
     display_welcome_message
 
     loop do
-      display_board
-
+      reset_scores
+      binding.pry
       loop do
-        current_player_moves
-        break if board.someone_won? || board.full?
+        reset
         display_board
+        loop do
+          current_player_moves
+          display_board
+          break if board.someone_won? || board.full?
+        end
+        update_score
+        break if human.score == 5 || computer.score == 5
       end
       display_results
       break unless play_again?
-      reset
     end
 
     display_goodbye_message
   end
 
+  def update_score
+    human.score_counter if board.winning_marker == human.marker
+    computer.score_counter if board.winning_marker == computer.marker
+  end
+
   def display_results
     display_board
 
-    case board.winning_marker
-    when human.marker
+    if human.score == 5
       puts "#{human.name} won!"
-      human.score_counter
-    when computer.marker
+    elsif computer.score == 5
       puts "#{computer.name} won!"
-      computer.score_counter
-    else
-      puts "Its a tie!"
     end
+  end
+
+  def reset_scores
+    human.score = 0
+    computer.score = 0
+  end
+
+    def display_board
+    clear
+    puts "#{human.name}, you are a #{human.marker}. #{computer.name} is a #{computer.marker}"
+    puts ''
+    puts "The score is: #{human.name} - #{human.score} and #{computer.name} - #{computer.score}"
+    puts ''
+    board.draw
+    puts ''
   end
 
   private
@@ -194,16 +214,6 @@ class TTTGame
 
   def display_goodbye_message
     puts "Thanks for playing Tic Tac Toe! Goodbye!"
-  end
-
-  def display_board
-    clear
-    puts "#{human.name}, you are a #{human.marker}. #{computer.name} is a #{computer.marker}"
-    puts ''
-    puts "The score is: #{human.name} - #{human.score} and #{computer.name} - #{computer.score}"
-    puts ''
-    board.draw
-    puts ''
   end
 
   def human_moves
@@ -240,7 +250,6 @@ class TTTGame
 
   def reset
     board.reset
-    puts "Let's play again!"
     @current_marker = FIRST_TO_MOVE
     sleep(1)
   end
